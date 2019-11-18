@@ -60,6 +60,7 @@ func getAqi(w http.ResponseWriter, r *http.Request) {
 	if weather.Status == "ok" {
 		jsonString := fmt.Sprintf(`{"time":%s,"dominentpol":%s,"aqi":%d}`, weather.Data.Time.LocalTime, weather.Data.Dominentpol, weather.Data.Aqi)
 		fmt.Println(jsonString)
+		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(jsonString))
 	}
 }
