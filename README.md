@@ -1,3 +1,3 @@
-#golang playground
+# golang playground
 
 Having fun with golang
