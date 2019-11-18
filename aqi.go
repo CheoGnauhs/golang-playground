@@ -8,6 +8,24 @@ import (
 	"net/http"
 )
 
+// Weather is used to store json data
+type Weather struct {
+	Status string
+	Data   WeatherData
+}
+
+// WeatherData is used to parse aqi data
+type WeatherData struct {
+	Aqi         int
+	Dominentpol string
+	Time        Time
+}
+
+// Time is used to parse time
+type Time struct {
+	LocalTime string `json:"s"`
+}
+
 func getToken() map[string]string {
 	fileValue, err := ioutil.ReadFile("aqi-token.json")
 	if err != nil {
@@ -34,5 +52,14 @@ func getAqi(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	log.Print("Request 200 OK")
-	w.Write(resBody)
+	var weather Weather
+	err = json.Unmarshal(resBody, &weather)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if weather.Status == "ok" {
+		jsonString := fmt.Sprintf(`{"time":%s,"dominentpol":%s,"aqi":%d}`, weather.Data.Time.LocalTime, weather.Data.Dominentpol, weather.Data.Aqi)
+		fmt.Println(jsonString)
+		w.Write([]byte(jsonString))
+	}
 }
